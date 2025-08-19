@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ShoppingCart, Search } from 'lucide-react';
+import { Menu, X, ShoppingCart, Search, User } from 'lucide-react';
 import { cn } from '../../utils/helpers/cn';
 import Container from './Container';
 import Flex from './Flex';
-import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 
 interface HeaderProps {
@@ -14,29 +13,26 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ cartItemCount = 0 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'HOME', href: '/' },
+    { name: 'ABOUT US', href: '/about' },
+    { name: 'COLLECTIONS', href: '/collections' },
+    { name: 'SHOP', href: '/shop' },
+    { name: 'CONTACT', href: '/contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-transparent absolute top-0 left-0 right-0 z-50">
       <Container>
-        <Flex className="items-center justify-between h-16">
+        <Flex className="items-center justify-between h-24 text-white">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">F</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900 hidden sm:block">
-              FurniCraft
+            <span className="text-2xl font-bold tracking-wider">
+              Arkwood <span className="font-normal">FURNITURE</span>
             </span>
           </Link>
 
@@ -47,10 +43,10 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount = 0 }) => {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary',
+                  'text-sm font-medium uppercase tracking-[0.2em] transition-colors hover:text-opacity-80',
                   isActive(item.href)
-                    ? 'text-primary'
-                    : 'text-gray-700'
+                    ? 'text-white'
+                    : 'text-white text-opacity-90'
                 )}
               >
                 {item.name}
@@ -59,20 +55,22 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount = 0 }) => {
           </nav>
 
           {/* Right side actions */}
-          <Flex className="items-center space-x-4">
-            {/* Search */}
+          <Flex className="items-center space-x-5">
             <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="p-2 text-gray-600 hover:text-primary transition-colors"
+              className="p-2 transition-colors hover:text-opacity-80"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
-
-            {/* Cart */}
+            <button
+              className="p-2 transition-colors hover:text-opacity-80"
+              aria-label="User profile"
+            >
+              <User className="w-5 h-5" />
+            </button>
             <Link
               to="/cart"
-              className="relative p-2 text-gray-600 hover:text-primary transition-colors"
+              className="relative p-2 transition-colors hover:text-opacity-80"
               aria-label="Shopping cart"
             >
               <ShoppingCart className="w-5 h-5" />
@@ -90,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount = 0 }) => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-primary transition-colors"
+              className="lg:hidden p-2"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -101,67 +99,38 @@ const Header: React.FC<HeaderProps> = ({ cartItemCount = 0 }) => {
             </button>
           </Flex>
         </Flex>
-
-        {/* Mobile Search */}
-        <AnimatePresence>
-          {isSearchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden overflow-hidden"
-            >
-              <div className="py-4">
-                <input
-                  type="search"
-                  placeholder="Search products..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </Container>
 
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden border-t border-gray-200 overflow-hidden"
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden absolute top-full left-0 right-0 bg-neutral-900 bg-opacity-90 backdrop-blur-sm"
           >
             <Container className="py-4">
-              <Flex direction="col" className="space-y-4">
+              <nav className="flex flex-col space-y-4">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      'text-base font-medium transition-colors hover:text-primary',
+                      'text-center text-lg font-medium uppercase tracking-widest transition-colors hover:text-opacity-80 py-2',
                       isActive(item.href)
-                        ? 'text-primary'
-                        : 'text-gray-700'
+                        ? 'text-white'
+                        : 'text-white text-opacity-90'
                     )}
                   >
                     {item.name}
                   </Link>
                 ))}
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Get Started
-                </Button>
-              </Flex>
+              </nav>
             </Container>
-          </motion.nav>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>
